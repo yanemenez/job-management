@@ -3,8 +3,10 @@ package com.gestao.vagas.gestao_vagas.modules.candidate.controllers;
 import com.gestao.vagas.gestao_vagas.exceptions.UserFoundException;
 import com.gestao.vagas.gestao_vagas.modules.candidate.CandidateEntity;
 import com.gestao.vagas.gestao_vagas.modules.candidate.CandidateRepository;
+import com.gestao.vagas.gestao_vagas.modules.candidate.useCases.CreateCandidateUseCase;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,15 +18,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class CandidateController {
 
     @Autowired //Manage my repository
-    private CandidateRepository candidateRepository;
+    private CreateCandidateUseCase createCandidateUseCase;
 
     @PostMapping("/")
-    public CandidateEntity create(@Valid @RequestBody CandidateEntity candidateEntity) {
-        this.candidateRepository
-                .findByUsernameOrEmail(candidateEntity.getUsername(), candidateEntity.getEmail())
-                .ifPresent((user) -> {
-                    throw new UserFoundException();
-                });
-        return this.candidateRepository.save(candidateEntity);
+    public  ResponseEntity<Object> create(@Valid @RequestBody CandidateEntity candidateEntity) {
+        try {
+            var result = this.createCandidateUseCase.execute(candidateEntity);
+            return ResponseEntity.ok().body(result);
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
+
 }
