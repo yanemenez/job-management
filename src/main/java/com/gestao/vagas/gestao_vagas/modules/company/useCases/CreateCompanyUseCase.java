@@ -29,4 +29,5 @@ public class CreateCompanyUseCase {
         return this.companyRepository.save(companyEntity);
     }
 
+
 }

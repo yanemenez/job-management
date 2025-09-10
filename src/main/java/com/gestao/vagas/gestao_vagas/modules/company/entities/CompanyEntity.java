@@ -7,7 +7,10 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.Length;
 
@@ -16,6 +19,9 @@ import java.util.UUID;
 
 @Entity (name = "company")
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CompanyEntity {
 
     @Id
@@ -29,7 +35,7 @@ public class CompanyEntity {
     @Email(message = "O campo [e-mail] deve conter um e-mail válido!")
     private String email;
 
-    @Length(min = 10, max = 100) //password
+    @Length(min = 10, max = 100, message = "A senha deva conter entre (10) e (100) caracteres") //password
     private String password;
 
     private String website;

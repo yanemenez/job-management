@@ -16,8 +16,8 @@ public class ExceptionHandlerController {
 
     private MessageSource messageSource;
 
-    public ExceptionHandlerController(MessageSource message) {
-        this.messageSource = message;
+    public ExceptionHandlerController(MessageSource messageSource) {
+        this.messageSource = messageSource;
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
