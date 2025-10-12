@@ -22,7 +22,8 @@ public class SecurityConfig {
                     // mantém exatamente os nomes que você mandou
                     auth.requestMatchers("/candidate/").permitAll()
                             .requestMatchers("/company/").permitAll()
-                            .requestMatchers("/auth/company").permitAll();
+                            .requestMatchers("/auth/company").permitAll()
+                            .requestMatchers("/candidate/auth").permitAll();
                     auth.anyRequest().authenticated(); // resto precisa de autenticação
                 })
                 .addFilterBefore(securityFilter, BasicAuthenticationFilter.class);
