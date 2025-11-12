@@ -1,5 +1,6 @@
 package com.gestao.vagas.gestao_vagas.modules.candidate;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,18 +23,26 @@ public class CandidateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID) //creates ID automatically
     private UUID id;
+
+    @Schema(example = "loyane menezes",  requiredMode = Schema.RequiredMode.REQUIRED, description = "Nome do candidato")
     private String name;
 
     @NotBlank
     @Pattern(regexp = "\\S+", message = "O campo [username] não deve conter espaço") //validation
+    @Schema(example = "loyane",  requiredMode = Schema.RequiredMode.REQUIRED, description = "Username do candidato")
     private String username;
 
     @Email(message = "O campo [email] deve conter um email válido") //validation
+    @Schema(example = "loyane@gmail.com",  requiredMode = Schema.RequiredMode.REQUIRED, description = "E-mail do candidato")
     private String email;
 
-    @Length(min = 10, max = 100) //password
+    @Length(min = 10, max = 100, message = "A senha deve conter entre (10) e (100) caracteres") //password
+    @Schema(example = "loyane@123", minLength = 10, maxLength = 100, requiredMode = Schema.RequiredMode.REQUIRED, description = "Senha do candidato")
     private String password;
+
+    @Schema(example = "Desenvolvedora Java",  requiredMode = Schema.RequiredMode.REQUIRED, description = "Breve descrição do candidato")
     private String description;
+
     private String curriculum;
 
 
