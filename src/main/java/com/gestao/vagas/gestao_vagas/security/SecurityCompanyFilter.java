@@ -16,7 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 
 @Component
-public class SecurityFilter extends OncePerRequestFilter {
+public class SecurityCompanyFilter extends OncePerRequestFilter {
 
     @Autowired
     private JWTProvider jwtProvider;
