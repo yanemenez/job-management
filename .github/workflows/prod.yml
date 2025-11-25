@@ -24,7 +24,7 @@ jobs:
       - name: Publish image
         run: docker push loyanemenezes/gestao_vagas
   deploy:
-    needs: nuild
+    needs: build
     runs-on: self-hosted
     steps:
         - name: Pull image docker hub
