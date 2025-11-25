@@ -23,3 +23,13 @@ jobs:
         run: docker build -t loyanemenezes/gestao_vagas .
       - name: Publish image
         run: docker push loyanemenezes/gestao_vagas
+  deploy:
+    needs: nuild
+    runs-on: self-hosted
+    steps:
+        - name: Pull image docker hub
+          run: docker pull loyanemenezes/gestao_vagas:latest
+        - name: remove container
+          run: docker rm -f
+        - name: Run docker container gestao-vagas
+          run: docker run -d -p 8080:8080 -e DATABASE_URL=${{ secrets.DATABASE_URL }} -e DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} -e DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}  --name gestao-vagas loyanemenezes/gestao_vagas
