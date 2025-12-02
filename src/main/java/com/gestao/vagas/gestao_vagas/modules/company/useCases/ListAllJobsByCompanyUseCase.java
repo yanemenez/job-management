@@ -1,0 +1,20 @@
+package com.gestao.vagas.gestao_vagas.modules.company.useCases;
+
+import java.util.List;
+import java.util.UUID;
+
+import com.gestao.vagas.gestao_vagas.modules.company.entities.JobEntity;
+import com.gestao.vagas.gestao_vagas.modules.company.repositories.JobRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class ListAllJobsByCompanyUseCase {
+
+    @Autowired
+    private JobRepository jobRepository;
+
+    public List<JobEntity> execute(UUID companyId) {
+        return this.jobRepository.findByCompanyId(companyId);
+    }
+}
