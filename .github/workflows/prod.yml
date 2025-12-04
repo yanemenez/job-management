@@ -1,9 +1,8 @@
-name: Gestao de Vagas Application
+name: Gestao de vagas Application
 
 on:
   push:
     branches: [main]
-  workflow_dispatch:
 
 jobs:
   build:
@@ -11,48 +10,27 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
-
       - name: Build project
-        run: mvn clean package -DskipTests
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: app
-          path: target/gestao-vagas-0.0.1-SNAPSHOT.jar
+        run: mvn clean install
+      - name: Login docker
+        run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+      - name: Build docker image
+        run: docker build -t loyanemenezes/gestao_vagas .
+      - name: Publish image
+        run: docker push loyanemenezes/gestao_vagas
 
   deploy:
     needs: build
     runs-on: self-hosted
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set environment variables
-        run: |
-          export DATABASE_URL=${{ secrets.DATABASE_URL }}
-          export DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}
-          export DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
-          export SPRING_PROFILES_ACTIVE=prod
-
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: app
-          path: ~/app
-
-      - name: Stop existing application
-        run: pkill -f 'gestao-vagas-0.0.1-SNAPSHOT.jar' || true
-
-      - name: Run application
-        run: |
-          nohup java \
-            -Dlogging.level.com.zaxxer.hikari=DEBUG \
-            -jar ~/app/gestao-vagas-0.0.1-SNAPSHOT.jar \
-            > ~/app/app.log 2>&1 &
+      - name: Pull image docker hub
+        run: docker pull loyanemenezes/gestao_vagas:latest
+      - name: remove container
+        run: docker rm -f gestao-vagas
+      - name: Run docker container gestao-vagas
+        run: docker run -d -p 8080:8080 -e DATABASE_URL=${{secrets.DATABASE_URL}} -e DATABASE_PASSWORD=${{secrets.DATABASE_PASSWORD}} -e DATABASE_USERNAME=${{secrets.DATABASE_USERNAME}} --name gestao-vagas loyanemenezes/gestao_vagas
