@@ -1,5 +1,4 @@
 package com.gestao.vagas.gestao_vagas.security;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,15 +22,14 @@ public class SecurityConfig {
     private static final String[] PERMIT_ALL_LIST = {
             "/swagger-ui/**",
             "/v3/api-docs/**",
-            "/swagger-resources/**",
+            "/swagger-resource/**",
             "/actuator/**"
     };
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable()) // desabilita CSRF
+        http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> {
-                    // mantém exatamente os nomes que você mandou
                     auth.requestMatchers("/candidate/").permitAll()
                             .requestMatchers("/company/").permitAll()
                             .requestMatchers("/company/auth").permitAll()
@@ -41,7 +39,6 @@ public class SecurityConfig {
                 })
                 .addFilterBefore(securityCandidateFilter, BasicAuthenticationFilter.class)
                 .addFilterBefore(securityCompanyFilter, BasicAuthenticationFilter.class);
-
         return http.build();
     }
 

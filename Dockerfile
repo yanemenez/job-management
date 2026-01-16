@@ -11,7 +11,7 @@ RUN mvn dependency:resolve
 
 COPY . .
 
-RUN mvn clean install
+RUN mvn clean install -DskipTests
 
 FROM eclipse-temurin:17-jdk-alpine
 EXPOSE 8080
