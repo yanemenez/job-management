@@ -1,7 +1,6 @@
 package com.gestao.vagas.gestao_vagas.security;
 
 import com.gestao.vagas.gestao_vagas.providers.JWTProvider;
-
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,34 +22,48 @@ public class SecurityCompanyFilter extends OncePerRequestFilter {
     private JWTProvider jwtProvider;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
-        // SecurityContextHolder.getContext().setAuthentication(null);
-        String header = request.getHeader("Authorization");
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
 
-        if (request.getRequestURI().startsWith("/company")) {
-            if (header != null) {
-                var token = this.jwtProvider.validateToken(header);
-                if (token == null) {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    return;
-                }
+        String authHeader = request.getHeader("Authorization");
 
-                var roles = token.getClaim("roles").asList(Object.class);
+        if (request.getRequestURI().startsWith("/company")
+                && !request.getRequestURI().startsWith("/company/auth")) {
 
-                var grants = roles.stream()
-                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toString().toUpperCase()))
-                        .toList();
-
-                request.setAttribute("company_id", token.getSubject());
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(token.getSubject(), null,
-                        grants);
-
-                SecurityContextHolder.getContext().setAuthentication(auth);
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
             }
+
+            String tokenValue = authHeader.substring(7); // remove "Bearer "
+
+            var decodedToken = jwtProvider.validateToken(tokenValue);
+            if (decodedToken == null) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+
+            var roles = decodedToken.getClaim("roles").asList(Object.class);
+
+            var authorities = roles.stream()
+                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toString().toUpperCase()))
+                    .toList();
+
+            request.setAttribute("company_id", decodedToken.getSubject());
+
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            decodedToken.getSubject(),
+                            null,
+                            authorities
+                    );
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
         filterChain.doFilter(request, response);
     }
-
 }
