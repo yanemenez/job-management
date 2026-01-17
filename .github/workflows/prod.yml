@@ -39,7 +39,7 @@ jobs:
         run: docker pull loyanemenezes/gestao_vagas:latest
 
       - name: remove container
-        run: docker rm -f gestao-vagas
+        run: docker rm -f gestao-vagas || true
 
       - name: Run docker container gestao-vagas
         run: |
