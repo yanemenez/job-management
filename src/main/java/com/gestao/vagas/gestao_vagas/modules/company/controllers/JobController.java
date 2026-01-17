@@ -36,7 +36,7 @@ public class JobController {
     @Autowired
     private ListAllJobsByCompanyUseCase listAllJobsByCompanyUseCase;
 
-    @PostMapping("/")
+    @PostMapping("")
     @PreAuthorize("hasRole('COMPANY')")
     @Tag(name = "Vagas", description = "Informações das vagas")
     @Operation(summary = "Cadastro de vaga", description = "Essa função é responsável por cadastrar as vagas dentro da empresa")
@@ -64,7 +64,7 @@ public class JobController {
         }
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     @PreAuthorize("hasRole('COMPANY')")
     @Tag(name = "Vagas", description = "Listagem das vagas")
     @Operation(summary = "Listagem de vaga", description = "Essa função é responsável por listar as vagas da empresa")
