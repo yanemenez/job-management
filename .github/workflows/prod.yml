@@ -44,6 +44,7 @@ jobs:
       - name: Run docker container gestao-vagas
         run: |
           docker run -d \
+            --name gestao-vagas \
             -p 8080:8080 \
             -e DATABASE_URL="${{ secrets.DATABASE_URL }}" \
             -e DATABASE_USERNAME="${{ secrets.DATABASE_USERNAME }}" \
